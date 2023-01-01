@@ -7,7 +7,6 @@ dash==2.7.1
 dl==0.1.0
 docutils==0.18.1
 HTMLParser==0.0.2
-ipython==8.7.0
 ipywidgets==7.6.5
 Jinja2==2.11.3
 jnius==1.1.0

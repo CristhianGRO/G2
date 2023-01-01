@@ -3,6 +3,9 @@ import plotly.express as px
 import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
+import dash_bootstrap_components as dbc
+import dash
+
 #===========================================================================================
 #Function that read the input data_branch file
 #===========================================================================================
@@ -70,8 +73,9 @@ def importResults():
 
 importResults()
 
-app = Dash(__name__)
 
+app = Dash(__name__)
+server = app.server
 
 id = id*24
 hora=[]
@@ -121,8 +125,10 @@ for i in range(1,nBus):
     fig_angulo.add_trace(go.Scatter(name = "Barra {}".format(i+1),x=hora, y=angulos[i]))
 
 #https://plotly.com/python/reference/layout/
-fig_angulo.update_layout(legend_valign="middle",bgcolor="white")
+fig_angulo.update_layout(legend_valign="middle")
 
+
+#Icons reference: https://fontawesome.com/icons
 
 
 app.layout = html.Div(children=[
@@ -133,8 +139,22 @@ app.layout = html.Div(children=[
         html.Div(children='''
          Automatic Visualization of Power Flow Data.
          ''',className="subtitulo"),
+        
     ]),
 
+   
+
+    html.Div([
+        html.Div([
+            html.Img(src="assets/imagens/profile.jpg"),
+            html.H3(children='Oliveira, C. G. R.'),
+            html.P(children='Pesquisador - UFMT'),
+            
+        ],className="profile"),
+
+    ],className = "sideBar"),
+
+    
     #Div for the graphics
                                
     html.Div([
@@ -148,13 +168,24 @@ app.layout = html.Div(children=[
         ],id="wideGraph"),
     html.Div([
         html.Div([
+            html.P('Máxima Tensão'),
+            html.H1('XXX [p.u.]'),
+         ],id="halfGraph"),
+          html.Div([
+            html.P('Mínima Tensão'),
+            html.H1('XXX [p.u.]'),
+            ],id="halfGraph2"), 
+    ],className="halfDivConfig"),
+    
+    html.Div([
+        html.Div([
             html.P('Ângulo de Fase Horário [deg]'),
             
             dcc.Graph(
                 id='grafico_angulo',
                 figure=fig_angulo
             )
-        ],id="wideGraph2"),
+        ],id="wideGraph3"),
     ]) 
     ])
 ])

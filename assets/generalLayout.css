@@ -1,0 +1,102 @@
+body{
+    margin: 1em 1%;
+	/* padding: 1em 3em; */
+	font: 80%/1.4 tahoma, arial, helvetica, lucida sans, sans-serif;
+	/* border: 1px solid #999;
+	background: #eee; */
+	position: relative;
+	/* background-color: #FFF; */
+	text-align: left;
+}
+
+
+h1{
+    margin:0px;
+    font-size:40px;
+    color:white;
+    background-color:#4e73df;
+    padding:2%;
+    text-align: center;
+    font-size: 2em;
+}
+
+.subtitulo{
+    text-align:center;
+    margin-top: 0.5%;
+    color:#4e73df;
+    font-size:15px;
+}
+
+#wideGraph{
+    color: rgba(15,157,88,0.7);
+    font-size: 1.5em;
+    width: 60%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: solid;
+    border-radius: 15px;
+    border-color: white;
+    border-left-color:rgba(15,157,88,0.7);
+    border-width: 7px;
+    padding-left:1%;
+    padding-right: 1%;
+    margin-top: 2%;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+}
+
+
+#wideGraph2{
+    color: rgba(219, 68, 55,0.7);
+    font-size: 1.5em;
+    width: 60%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: solid;
+    border-radius: 15px;
+    border-color: white;
+    border-left-color:rgba(219, 68, 55,0.7);
+    border-width: 7px;
+    padding-left:1%;
+    padding-right: 1%;
+    margin-top: 2%;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+}
+
+
+#wideGraph3{
+    color: rgba(66, 133, 244,0.7);
+    font-size: 1.5em;
+    width: 60%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: solid;
+    border-radius: 15px;
+    border-color: white;
+    border-left-color:rgba(66, 133, 244,0.7);
+    border-width: 7px;
+    padding-left:1%;
+    padding-right: 1%;
+    margin-top: 2%;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+}
+
+#wideGraph4{
+    color: rgba(244, 132, 0,0.7);
+    font-size: 1.5em;
+    width: 60%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border-style: solid;
+    border-radius: 15px;
+    border-color: white;
+    border-left-color:rgba(244, 132, 0,0.7);
+    border-width: 7px;
+    padding-left:1%;
+    padding-right: 1%;
+    margin-top: 2%;
+    box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
+}

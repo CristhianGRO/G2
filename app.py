@@ -4,7 +4,8 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objs as go
 import dash_bootstrap_components as dbc
-import dash
+from dash.dependencies import Input, Output
+
 
 #===========================================================================================
 #Function that read the input data_branch file
@@ -74,6 +75,9 @@ def importResults():
 importResults()
 
 
+
+
+
 app = Dash(__name__)
 server = app.server
 
@@ -106,6 +110,22 @@ for i in range(1,nBus+1,1):
     newdf = df.query('Id == "{}"'.format(i))
     angAtual = newdf["Angulo"].tolist()
     angulos.append(angAtual)
+
+
+#===========================================================================================
+#Making some Analysis
+#===========================================================================================
+maxTensaoHoraria = max(tensoes)
+maxTensao = max(maxTensaoHoraria)
+horaPico_inf = maxTensaoHoraria.index(maxTensao) + 1
+
+minTensaoHoraria = min(tensoes)
+minTensao = min(minTensaoHoraria)
+horaPico_sup = minTensaoHoraria.index(min(minTensaoHoraria)) + 1
+
+
+
+
 
 #===========================================================================================
 #Making the voltage Figure
@@ -155,9 +175,9 @@ app.layout = html.Div(children=[
     ],className = "sideBar"),
 
     
-    #Div for the graphics
-                               
+    #Div for body content
     html.Div([
+         html.Div([
         html.Div([
             html.P('Módulo de Tensão Horário [p.u.]'),
             
@@ -167,17 +187,22 @@ app.layout = html.Div(children=[
             )
         ],id="wideGraph"),
     html.Div([
+
         html.Div([
             html.P('Máxima Tensão'),
-            html.H1('XXX [p.u.]'),
+            html.H1(children="{:.3f} [p.u.]".format(maxTensao),id="id_maxTensao"),
          ],id="halfGraph"),
+
+
           html.Div([
             html.P('Mínima Tensão'),
-            html.H1('XXX [p.u.]'),
+            html.H1(children="{:.3f} [p.u.]".format(minTensao),id="id_minTensao"),
             ],id="halfGraph2"), 
+
             html.Div([
-            html.P('Horário de Pico:'),
-            html.H1('XX:XX h'),
+            html.P('Horas Críticas'),
+            html.H2(children="Máx.: {:02d}:00 h".format(horaPico_inf),id="id_horaPicoInf"),
+            html.H2(children="Mín.: {:02d}:00 h".format(horaPico_sup),id="id_horaPicoSup"),
             ],id="halfGraph_grey"), 
     ],className="halfDivConfig"),
     ]),
@@ -191,8 +216,11 @@ app.layout = html.Div(children=[
             )
         ],id="wideGraph3"),
     ]) 
-    
+
+    ],className="bodyContent"),                         
+   
 ])
+
 
 if __name__ == '__main__':
     app.run_server(debug=True)

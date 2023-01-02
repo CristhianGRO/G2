@@ -5,7 +5,7 @@ import numpy as np
 import plotly.graph_objs as go
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
-
+import math
 
 #===========================================================================================
 #Function that read the input data_branch file
@@ -53,8 +53,10 @@ def readInputBus():
 nBus    = readInputBus()
 nBranch = readInputBranch()
 tensao = []
-moduloTensao = []
-anguloTensao = []
+moduloTensao   = []
+anguloTensao   = []
+perdasAtivas   = []
+perdasReativas = []
 results = []
 
 #===========================================================================================
@@ -69,13 +71,16 @@ def importResults():
             modulo = float(linha.split(" ",2*nBus)[i])
             angulo = float(linha.split(" ",2*nBus)[i+1])
             moduloTensao.append(modulo)
-            anguloTensao.append(angulo)
+            anguloTensao.append(angulo*180/math.pi)
+    for linha in linhas:
+        for i in range(2*nBus,2*nBus+2*nBranch,2):
+            perdaAtiva = float(linha.split(" ",2*(nBus+nBranch)+2)[i])
+            perdaReativa = float(linha.split(" ",2*(nBus+nBranch)+2)[i+1])
+            perdasAtivas.append(perdaAtiva)
+            perdasReativas.append(perdaReativa)
         
 
 importResults()
-
-
-
 
 
 app = Dash(__name__)
@@ -92,8 +97,24 @@ for j in range(24):
 df = pd.DataFrame({
     "Id": id,
     "Tensao": moduloTensao,
-    "Angulo": anguloTensao
+    "Angulo": anguloTensao,
 })
+
+idBranch = []
+for i in range(1,nBranch+1,1):
+    idBranch.append("{}".format(i))
+idBranch = idBranch*24
+
+
+dfBranch = pd.DataFrame({
+    "Id": idBranch,
+    "Perdas_Ativas": perdasAtivas,
+    "Perdas_Reativas": perdasReativas
+})
+   
+
+
+
 #===========================================================================================
 #Making the voltage Vector used to construct the voltage figure
 #===========================================================================================
@@ -110,22 +131,59 @@ for i in range(1,nBus+1,1):
     newdf = df.query('Id == "{}"'.format(i))
     angAtual = newdf["Angulo"].tolist()
     angulos.append(angAtual)
+#===========================================================================================
+#Making the active loses Vector used to construct the angle figure
+#===========================================================================================
+perdasP = []
+perdasQ = []
+for i in range(1,nBranch+1,1):
+    newdfBranch = dfBranch.query('Id == "{}"'.format(i))
+    perdaPAtual = newdfBranch["Perdas_Ativas"].tolist()
+    perdasP.append(perdaPAtual)
+
+for i in range(1,nBranch+1,1):
+    newdfBranch = dfBranch.query('Id == "{}"'.format(i))
+    perdaQAtual = newdfBranch["Perdas_Reativas"].tolist()
+    perdasQ.append(perdaQAtual)
+
 
 
 #===========================================================================================
 #Making some Analysis
 #===========================================================================================
+#Voltage Analysis
 maxTensaoHoraria = max(tensoes)
 maxTensao = max(maxTensaoHoraria)
 horaPico_inf = maxTensaoHoraria.index(maxTensao) + 1
+
 
 minTensaoHoraria = min(tensoes)
 minTensao = min(minTensaoHoraria)
 horaPico_sup = minTensaoHoraria.index(min(minTensaoHoraria)) + 1
 
+#Losses Analysis
+maxPerdaPHoraria = max(perdasP)
+maxPerdaP = max(maxPerdaPHoraria)
+
+#Searching for the maximal total loss
+perdasP_maxTotal = 0
+for i in range(24):
+    somaPerdaPHora = 0;
+    for j in range(nBranch):
+        somaPerdaPHora += perdasP[j][i]
+    if(somaPerdaPHora>perdasP_maxTotal):
+        perdasP_maxTotal = somaPerdaPHora
+    
+print(perdasP_maxTotal)
+
+
+minPerdaPHoraria = min(perdasP)
+minPerdaP = min(minPerdaPHoraria)
 
 
 
+
+#https://plotly.com/python/reference/layout/
 
 #===========================================================================================
 #Making the voltage Figure
@@ -134,7 +192,6 @@ fig_tensao = go.Figure(data=[go.Scatter(name="Barra {}".format(1),x=hora, y=tens
 for i in range(1,nBus):
     fig_tensao.add_trace(go.Scatter(name = "Barra {}".format(i+1),x=hora, y=tensoes[i]))
 
-#https://plotly.com/python/reference/layout/
 fig_tensao.update_layout(legend_valign="middle")
 
 #===========================================================================================
@@ -144,39 +201,66 @@ fig_angulo = go.Figure(data=[go.Scatter(name="Barra {}".format(1),x=hora, y=angu
 for i in range(1,nBus):
     fig_angulo.add_trace(go.Scatter(name = "Barra {}".format(i+1),x=hora, y=angulos[i]))
 
-#https://plotly.com/python/reference/layout/
 fig_angulo.update_layout(legend_valign="middle")
+#===========================================================================================
+#Making the active Loss Figure
+#===========================================================================================
+fig_perdasAtivas = go.Figure(data=[go.Scatter(name="Ramo {}".format(1),x=hora, y=perdasP[0])])
+for i in range(1,nBranch):
+    fig_perdasAtivas.add_trace(go.Scatter(name = "Ramo {}".format(i+1),x=hora, y=perdasP[i]))
+
+fig_perdasAtivas.update_layout(legend_valign="middle")
+
+#===========================================================================================
+#Making the reactive Loss Figure
+#===========================================================================================
+fig_perdasReativas = go.Figure(data=[go.Scatter(name="Ramo {}".format(1),x=hora, y=perdasQ[0])])
+for i in range(1,nBranch):
+    fig_perdasReativas.add_trace(go.Scatter(name = "Ramo {}".format(i+1),x=hora, y=perdasQ[i]))
+
+fig_perdasReativas.update_layout(legend_valign="middle")
+
+
+#https://plotly.com/python/reference/layout/
+
 
 
 #Icons reference: https://fontawesome.com/icons
 
 
 app.layout = html.Div(children=[
-    #Div for the superior info
+   
+    #------------------------------------------------------------------------------------------
+    #SuperiorBar
     html.Div([
         html.H1(children='G2 - Graph Generator'),
        
-        html.Div(children='''
-         Automatic Visualization of Power Flow Data.
-         ''',className="subtitulo"),
+        html.H2(children='Automatic Visualization of Power Flow Data',className="subtitulo"),
         
-    ]),
+    ],className="superiorBar"),
 
-   
-
+   #------------------------------------------------------------------------------------------
+    #SideBar
     html.Div([
         html.Div([
             html.Img(src="assets/imagens/profile.jpg"),
             html.H3(children='Oliveira, C. G. R.'),
             html.P(children='Pesquisador - UFMT'),
-            
+            html.Hr(className="HrSide"),
         ],className="profile"),
 
     ],className = "sideBar"),
 
     
-    #Div for body content
+    
+    #------------------------------------------------------------------------------------------
+    #Grafico de Tensao
     html.Div([
+
+        html.Div([
+            html.H1(children='Dados de Barra',className='titulo_secao'),
+        ],className='div_titulo_secao'),
+
          html.Div([
         html.Div([
             html.P('Módulo de Tensão Horário [p.u.]'),
@@ -186,26 +270,30 @@ app.layout = html.Div(children=[
                 figure=fig_tensao
             )
         ],id="wideGraph"),
+    #------------------------------------------------------------------------------------------
+    #Analise de Tensao
     html.Div([
 
         html.Div([
             html.P('Máxima Tensão'),
             html.H1(children="{:.3f} [p.u.]".format(maxTensao),id="id_maxTensao"),
-         ],id="halfGraph"),
+         ],id="halfGraph_green"),
 
 
           html.Div([
             html.P('Mínima Tensão'),
             html.H1(children="{:.3f} [p.u.]".format(minTensao),id="id_minTensao"),
-            ],id="halfGraph2"), 
+            ],id="halfGraph_red"), 
 
             html.Div([
             html.P('Horas Críticas'),
             html.H2(children="Máx.: {:02d}:00 h".format(horaPico_inf),id="id_horaPicoInf"),
-            html.H2(children="Mín.: {:02d}:00 h".format(horaPico_sup),id="id_horaPicoSup"),
-            ],id="halfGraph_grey"), 
+            html.H2(children="Mín. : {:02d}:00 h".format(horaPico_sup),id="id_horaPicoSup"),
+            ],id="halfGraph_blue"), 
     ],className="halfDivConfig"),
     ]),
+    #------------------------------------------------------------------------------------------
+    #Grafico de Angulo de fase
     html.Div([
         html.Div([
             html.P('Ângulo de Fase Horário [deg]'),
@@ -214,8 +302,67 @@ app.layout = html.Div(children=[
                 id='grafico_angulo',
                 figure=fig_angulo
             )
-        ],id="wideGraph3"),
-    ]) 
+        ],id="wideGraph_blue"),
+    ]),
+
+    #------------------------------------------------------------------------------------------
+    #Grafico de Perdas Ativas
+    html.Div([
+        html.H1(children='Dados de Trecho',className='titulo_secao'),
+    ],className='div_titulo_secao'),
+
+
+    html.Div([
+        html.Div([
+            html.P('Perdas Ativas por Ramo [p.u.]'),
+            
+            dcc.Graph(
+                id='grafico_perdasAtivas',
+                figure=fig_perdasAtivas
+            )
+        ],id="wideGraph_yellow"),
+    ]),
+
+    #------------------------------------------------------------------------------------------
+    #Analise de Perdas Ativas
+        html.Div([
+
+        html.Div([
+            html.P('Máxima Perda'),
+            html.H1(children="{:.3f} [p.u.]".format(maxPerdaP),id="id_maxPerdaP"),
+         ],id="halfGraph_yellow"),
+
+
+          html.Div([
+            html.P('Mínima Perda'),
+            html.H1(children="{:.3f} [p.u.]".format(minPerdaP),id="id_minPerdaP"),
+            ],id="halfGraph_red"), 
+
+            html.Div([
+            html.P('Máxima Perda Total'),
+            html.H1(children="{:.3f} [p.u.]".format(perdasP_maxTotal),id="id_maxPerdaPTotal"),
+            ],id="halfGraph_green"), 
+    ],className="halfDivConfig"),
+    
+    #------------------------------------------------------------------------------------------
+    #Grafico de Perdas Reativas
+
+    html.Div([
+        html.Div([
+            html.P('Perdas Reativas por Ramo [p.u.]'),
+            
+            dcc.Graph(
+                id='grafico_perdasReativas',
+                figure=fig_perdasReativas
+            )
+        ],id="wideGraph_red"),
+    ]),
+
+
+
+
+
+
 
     ],className="bodyContent"),                         
    
@@ -223,4 +370,4 @@ app.layout = html.Div(children=[
 
 
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True,use_reloader=False)

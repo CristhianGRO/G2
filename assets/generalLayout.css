@@ -61,13 +61,16 @@ h1{
     color:#4e73df;
     font-size:15px;
 }
+.bodyContent{
+    margin-left: 17%;
+}
+
 
 #wideGraph{
     display: block;
     color: rgba(15,157,88,0.7);
     font-size: 1.5em;
-    width: 70%;
-    margin-left: 18%;
+    width: 80%;
     border-style: solid;
     border-radius: 15px;
     border-color: white;
@@ -83,8 +86,7 @@ h1{
 #wideGraph2{
     color: rgba(219, 68, 55,0.7);
     font-size: 1.5em;
-    width: 70%;
-    margin-left: 18%;
+    width: 80%;
     display: block;
     border-style: solid;
     border-radius: 15px;
@@ -101,8 +103,7 @@ h1{
 #wideGraph3{
     color: rgba(66, 133, 244,0.7);
     font-size: 1.5em;
-    width: 70%;
-    margin-left: 18%;
+    width: 80%;
     display: block;
     border-style: solid;
     border-radius: 15px;
@@ -118,8 +119,7 @@ h1{
 #wideGraph4{
     color: rgba(244, 132, 0,0.7);
     font-size: 1.5em;
-    width: 70%;
-    margin-left: 18%;
+    width: 80%;
     display: block;
     border-style: solid;
     border-radius: 15px;
@@ -132,10 +132,9 @@ h1{
     box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
 }
 .halfDivConfig{
-    margin-left: 18%;
-    width:70%;
-    padding-left:1%;
-    padding-right: 1%;
+    width:80%;
+    padding-right: 3%;
+    padding-left: 3%;
     margin-top: 0.5%;
 }
 #halfGraph{
@@ -184,12 +183,13 @@ h1{
 #halfGraph2 H1{
     font-size: 2em;
     color:rgba(95, 99, 104);
+    margin:0px;
 }
 
 #halfGraph_grey{
     display: inline-block;
     vertical-align: middle;
-    color: rgba(95, 99, 104);
+    color: rgba(66, 133, 244,0.7);
     font-size: 1.5em;
     width: 27%;
     height:8em;
@@ -197,15 +197,21 @@ h1{
     border-style: solid;
     border-radius: 15px;
     border-color: white;
-    border-left-color:rgba(95, 99, 104);
+    border-left-color:rgba(66, 133, 244,0.7);
     border-width: 7px;
     padding-left:1%;
     padding-right: 1%;
     margin-top: 2%;
     box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
 }
-
-#halfGraph_grey H1{
-    font-size: 2em;
+#halfGraph_grey P{
+    margin-bottom: 0px;
+    padding-bottom: 0.4em;
+}
+#halfGraph_grey H2{
+    position:relative;
+    font-size: 1.5em;
+    margin:0px;
     color:rgba(95, 99, 104);
 }
+

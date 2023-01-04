@@ -72,6 +72,26 @@ hr{
     padding: 2em 0;
     margin-right:18%;
 }
+
+.MenuLateral a{
+    
+    padding: 5% 2% 5% 2%;
+    margin-left: 0.5em;
+    text-decoration: none;
+    font-size: 1.4em;
+    color: #ffffff;
+    display: block;
+    transition: 0.3s;
+}
+
+.MenuLateral :hover{
+    background-color: #ffffff;
+    color: #4e73df;
+}
+
+
+
+
 .profile img{
     display: block;
     width: 50%;
@@ -102,6 +122,22 @@ hr{
 }
 .bodyContent{
     margin-left: 17%;
+
+}
+
+.textoCorpo H1{
+    font-size: 2.5em;
+    text-align: left;
+    font-weight:lighter;
+    color:rgba(95, 99, 104,0.5);
+}
+
+.textoCorpo p{
+    font-size: 1.5em;
+    text-align: justify;
+    margin-right: 20%;
+    font-weight:lighter;
+    color:rgba(95, 99, 104,1);
 }
 
 

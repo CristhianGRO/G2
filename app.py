@@ -6,6 +6,7 @@ import plotly.graph_objs as go
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
 import math
+import dash
 
 #===========================================================================================
 #Function that read the input data_branch file
@@ -83,7 +84,7 @@ def importResults():
 importResults()
 
 
-app = Dash(__name__)
+app = Dash(__name__, use_pages=True)
 server = app.server
 
 id = id*24
@@ -174,7 +175,7 @@ for i in range(24):
     if(somaPerdaPHora>perdasP_maxTotal):
         perdasP_maxTotal = somaPerdaPHora
     
-print(perdasP_maxTotal)
+
 
 
 minPerdaPHoraria = min(perdasP)
@@ -249,122 +250,23 @@ app.layout = html.Div(children=[
             html.Hr(className="HrSide"),
         ],className="profile"),
 
+
+     html.Div([
+            html.Div([
+                dcc.Link(
+                    f"{page['name']}", href=page["relative_path"]
+                )
+        ])
+            for page in dash.page_registry.values()
+            
+        ],className="MenuLateral"
+    ),
+
     ],className = "sideBar"),
 
+	dash.page_container ,
     
-    
-    #------------------------------------------------------------------------------------------
-    #Grafico de Tensao
-    html.Div([
-
-        html.Div([
-            html.H1(children='Dados de Barra',className='titulo_secao'),
-        ],className='div_titulo_secao'),
-
-         html.Div([
-        html.Div([
-            html.P('Módulo de Tensão Horário [p.u.]'),
-            
-            dcc.Graph(
-                id='grafico_tensao',
-                figure=fig_tensao
-            )
-        ],id="wideGraph"),
-    #------------------------------------------------------------------------------------------
-    #Analise de Tensao
-    html.Div([
-
-        html.Div([
-            html.P('Máxima Tensão'),
-            html.H1(children="{:.3f} [p.u.]".format(maxTensao),id="id_maxTensao"),
-         ],id="halfGraph_green"),
-
-
-          html.Div([
-            html.P('Mínima Tensão'),
-            html.H1(children="{:.3f} [p.u.]".format(minTensao),id="id_minTensao"),
-            ],id="halfGraph_red"), 
-
-            html.Div([
-            html.P('Horas Críticas'),
-            html.H2(children="Máx.: {:02d}:00 h".format(horaPico_inf),id="id_horaPicoInf"),
-            html.H2(children="Mín. : {:02d}:00 h".format(horaPico_sup),id="id_horaPicoSup"),
-            ],id="halfGraph_blue"), 
-    ],className="halfDivConfig"),
-    ]),
-    #------------------------------------------------------------------------------------------
-    #Grafico de Angulo de fase
-    html.Div([
-        html.Div([
-            html.P('Ângulo de Fase Horário [deg]'),
-            
-            dcc.Graph(
-                id='grafico_angulo',
-                figure=fig_angulo
-            )
-        ],id="wideGraph_blue"),
-    ]),
-
-    #------------------------------------------------------------------------------------------
-    #Grafico de Perdas Ativas
-    html.Div([
-        html.H1(children='Dados de Trecho',className='titulo_secao'),
-    ],className='div_titulo_secao'),
-
-
-    html.Div([
-        html.Div([
-            html.P('Perdas Ativas por Ramo [p.u.]'),
-            
-            dcc.Graph(
-                id='grafico_perdasAtivas',
-                figure=fig_perdasAtivas
-            )
-        ],id="wideGraph_yellow"),
-    ]),
-
-    #------------------------------------------------------------------------------------------
-    #Analise de Perdas Ativas
-        html.Div([
-
-        html.Div([
-            html.P('Máxima Perda'),
-            html.H1(children="{:.3f} [p.u.]".format(maxPerdaP),id="id_maxPerdaP"),
-         ],id="halfGraph_yellow"),
-
-
-          html.Div([
-            html.P('Mínima Perda'),
-            html.H1(children="{:.3f} [p.u.]".format(minPerdaP),id="id_minPerdaP"),
-            ],id="halfGraph_red"), 
-
-            html.Div([
-            html.P('Máxima Perda Total'),
-            html.H1(children="{:.3f} [p.u.]".format(perdasP_maxTotal),id="id_maxPerdaPTotal"),
-            ],id="halfGraph_green"), 
-    ],className="halfDivConfig"),
-    
-    #------------------------------------------------------------------------------------------
-    #Grafico de Perdas Reativas
-
-    html.Div([
-        html.Div([
-            html.P('Perdas Reativas por Ramo [p.u.]'),
-            
-            dcc.Graph(
-                id='grafico_perdasReativas',
-                figure=fig_perdasReativas
-            )
-        ],id="wideGraph_red"),
-    ]),
-
-
-
-
-
-
-
-    ],className="bodyContent"),                         
+                            
    
 ])
 

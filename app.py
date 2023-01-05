@@ -244,7 +244,7 @@ app.layout = html.Div(children=[
     #SideBar
     html.Div([
         html.Div([
-            html.Img(src="assets/imagens/profile.jpg"),
+            html.Img(src="../assets/imagens/profile.jpg"),
             html.H3(children='Oliveira, C. G. R.'),
             html.P(children='Pesquisador - UFMT'),
             html.Hr(className="HrSide"),

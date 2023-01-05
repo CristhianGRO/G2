@@ -14,6 +14,31 @@ hr{
     border-width: 0 0 0.1em 0;
     border-color: rgba(255,255,255,0.3);;
 }
+.tecnologiasUtilizadas{
+    width: 80%;
+    padding-left:1%;
+    padding-right: 1%;
+    margin-top: 2%;
+    text-align: center;
+}
+.techIcon{
+    width: 8em;
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: 5%;
+}
+.institutionIcon{
+    width: 10em;
+    margin-right: 5%;
+}
+
+.obra{
+    width:40%;
+    height: 40%;
+    position: relative;
+    left:20%  
+}
+
 .superiorBar{
     display: block;
     font-size: 1.5em;
@@ -74,7 +99,6 @@ hr{
 }
 
 .MenuLateral a{
-    
     padding: 5% 2% 5% 2%;
     margin-left: 0.5em;
     text-decoration: none;
@@ -88,8 +112,6 @@ hr{
     background-color: #ffffff;
     color: #4e73df;
 }
-
-
 
 
 .profile img{
@@ -138,6 +160,7 @@ hr{
     margin-right: 20%;
     font-weight:lighter;
     color:rgba(95, 99, 104,1);
+    line-height: 2em;
 }
 
 

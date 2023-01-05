@@ -11,7 +11,7 @@ dash.register_page(
 layout = html.Div(children=[
    
     html.H1(children='Under Construction'),
-
+    html.Img(src="../assets/imagens/obra.png",className="obra"),
     html.H2(children='Don''t you worry. You still have 3 more pages to enjoy')
 
 ],className="bodyContent")

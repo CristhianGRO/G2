@@ -164,7 +164,7 @@ hr{
 }
 
 
-#wideGraph{
+#wideGraph_green{
     display: block;
     color: rgba(15,157,88,0.7);
     font-size: 1.5em;
@@ -256,6 +256,7 @@ hr{
 #halfGraph_green H1{
     font-size: 2em;
     color:rgba(95, 99, 104);
+    margin-top:0.4em;
 }
 
 
@@ -282,6 +283,7 @@ hr{
     font-size: 2em;
     color:rgba(95, 99, 104);
     margin:0px;
+    margin-top:0.4em;
 }
 
 #halfGraph_blue{
@@ -302,6 +304,45 @@ hr{
     margin-top: 2%;
     box-shadow: 0 .15rem 1.75rem 0 rgba(58,59,69,.15);
 }
+#halfGraph_blue H1{
+    font-size: 2em;
+    color:rgba(95, 99, 104);
+    margin-top:0.4em;
+}
+
+#halfGraph_green P{
+    margin-bottom: 0px;
+    padding-bottom: 0.4em;
+}
+#halfGraph_green H2{
+    position:relative;
+    font-size: 1.5em;
+    margin:0px;
+    color:rgba(95, 99, 104);
+}
+#halfGraph_yellow P{
+    margin-bottom: 0px;
+    padding-bottom: 0.4em;
+}
+#halfGraph_yellow H2{
+    position:relative;
+    font-size: 1.5em;
+    margin:0px;
+    color:rgba(95, 99, 104);
+}
+
+#halfGraph_red P{
+    margin-bottom: 0px;
+    padding-bottom: 0.4em;
+}
+#halfGraph_red H2{
+    position:relative;
+    font-size: 1.5em;
+    margin:0px;
+    color:rgba(95, 99, 104);
+}
+
+
 #halfGraph_blue P{
     margin-bottom: 0px;
     padding-bottom: 0.4em;
@@ -335,5 +376,5 @@ hr{
 #halfGraph_yellow H1{
     font-size: 2em;
     color:rgba(95, 99, 104);
-    margin:0px;
+    margin-top:0.4em;
 }

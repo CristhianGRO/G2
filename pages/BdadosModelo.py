@@ -4,8 +4,8 @@ import plotly.graph_objs as go
 import dash
 
 #Importing model variables avaiable from pages dadosLinha and dadosBarra
-import pages.EdadosLinha as dadosLinha
-import pages.DdadosBarra as dadosBarra
+#import pages.EdadosLinha as dadosLinha
+#import pages.DdadosBarra as dadosBarra
 
 dash.register_page(
     __name__,
@@ -144,9 +144,9 @@ fig_loadCurve.update_layout(legend_valign="middle")
 totalMW = 0
 totalMVar = 0
 
-for i in range(dadosBarra.nBus):
-    totalMW   += float(dadosBarra.dataBus[i][2])
-    totalMVar += float(dadosBarra.dataBus[i][3]) 
+#for i in range(dadosBarra.nBus):
+#    totalMW   += float(dadosBarra.dataBus[i][2])
+#    totalMVar += float(dadosBarra.dataBus[i][3]) 
 
 layout = html.Div(children=[
     
@@ -161,12 +161,12 @@ layout = html.Div(children=[
         html.Div([
             html.Div([
                 html.P('Número de Barras'),
-                html.H1(children="{}".format(dadosBarra.nBus),id="id_nBus",style={'margin-left':'2.5em'}),
+               # html.H1(children="{}".format(dadosBarra.nBus),id="id_nBus",style={'margin-left':'2.5em'}),
             ],id="halfGraph_green"),
 
             html.Div([
                 html.P('Número de Linhas'),
-                html.H1(children="{}".format(dadosLinha.nBranch),id="id_nBranch",style={'margin-left':'2.5em'}),
+               # html.H1(children="{}".format(dadosLinha.nBranch),id="id_nBranch",style={'margin-left':'2.5em'}),
             ],id="halfGraph_yellow"), 
 
             html.Div([

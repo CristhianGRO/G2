@@ -4,8 +4,8 @@ import plotly.graph_objs as go
 import dash
 
 #Importing model variables avaiable from pages dadosLinha and dadosBarra
-import pages.DdadosLinha as dadosLinha
-import pages.CdadosBarra as dadosBarra
+import pages.B3dadosLinha as dadosLinha
+import pages.B2dadosBarra as dadosBarra
 
 dash.register_page(
     __name__,

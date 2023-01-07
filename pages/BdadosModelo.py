@@ -144,9 +144,9 @@ fig_loadCurve.update_layout(legend_valign="middle")
 totalMW = 0
 totalMVar = 0
 
-for i in range(dadosBarra.nBus):
-    totalMW   += float(dadosBarra.dataBus[i][2])
-    totalMVar += float(dadosBarra.dataBus[i][3]) 
+#for i in range(dadosBarra.nBus):
+#    totalMW   += float(dadosBarra.dataBus[i][2])
+#    totalMVar += float(dadosBarra.dataBus[i][3]) 
 
 layout = html.Div(children=[
     

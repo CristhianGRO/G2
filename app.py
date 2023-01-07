@@ -1,31 +1,48 @@
 from dash import Dash, html, dcc
-import plotly.express as px
-import pandas as pd
+import dash
 
-app = Dash(__name__)
 
-# assume you have a "long-form" data frame
-# see https://plotly.com/python/px-arguments/ for more options
-df = pd.DataFrame({
-    "Fruit": ["Apples", "Oranges", "Bananas", "Apples", "Oranges", "Bananas"],
-    "Amount": [4, 1, 2, 2, 4, 5],
-    "City": ["SF", "SF", "SF", "Montreal", "Montreal", "Montreal"]
-})
+app = Dash(__name__, use_pages=True)
+server = app.server
 
-fig = px.bar(df, x="Fruit", y="Amount", color="City", barmode="group")
 
 app.layout = html.Div(children=[
-    html.H1(children='Hello Dash'),
+    #------------------------------------------------------------------------------------------
+    #SuperiorBar
+    html.Div([
+        html.H1(children='G2 - Graph Generator'),
+       
+        html.H2(children='Automatic Visualization of Power Flow Data',className="subtitulo"),
+        
+    ],className="superiorBar"),
 
-    html.Div(children='''
-        Dash: A web application framework for your data.
-    '''),
+   #------------------------------------------------------------------------------------------
+    #SideBar
+    html.Div([
+        html.Div([
+            html.Img(src="../assets/imagens/profile.jpg"),
+            html.H3(children='Oliveira, C. G. R.'),
+            html.P(children='Pesquisador - UFMT'),
+            html.Hr(className="HrSide"),
+        ],className="profile"),
 
-    dcc.Graph(
-        id='example-graph',
-        figure=fig
-    )
+
+     html.Div([
+            html.Div([
+                dcc.Link(
+                    f"{page['name']}", href=page["relative_path"]
+                )
+        ])
+            for page in dash.page_registry.values()
+            
+        ],className="MenuLateral"
+    ),
+
+    ],className = "sideBar"),
+
+	dash.page_container ,                         
 ])
 
+
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True,use_reloader=False)

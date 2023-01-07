@@ -1,7 +1,6 @@
 dash==2.7.1
 numpy
 pandas
-math
 plotly
 gunicorn
 dash-tools

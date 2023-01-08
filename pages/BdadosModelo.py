@@ -3,9 +3,6 @@ import pandas as pd
 import plotly.graph_objs as go
 import dash
 
-#Importing model variables avaiable from pages dadosLinha and dadosBarra
-#import pages.EdadosLinha as dadosLinha
-#import pages.DdadosBarra as dadosBarra
 
 dash.register_page(
     __name__,
@@ -18,6 +15,57 @@ dash.register_page(
 barraPhotovoltaic = []
 dadosGeracao = []
 Ppico = []
+
+
+#===========================================================================================
+#Function that read the input data_bus file
+#===========================================================================================
+dataBus = []
+idBus = []
+def readInputBus():
+    dataFile = open("data_Bus.txt","r")
+    linhas = dataFile.readlines()
+    j=0
+    for linha in linhas:
+        if j != 0:
+            idJ=linha.split(",",2)[0] 
+            idBus.append(idJ)
+            type=linha.split(",",2)[1]
+            dataBus.append([])
+            dataBus[j-1].append(id)
+            dataBus[j-1].append(type)
+            Pd=linha.split(",",5)[2]
+            Qd=linha.split(",",5)[3]
+            dataBus[j-1].append(Pd)
+            dataBus[j-1].append(Qd)
+        else:
+            nBus=int(linha.split(",",2)[0])
+        j=j+1
+    return nBus
+
+nBus    = readInputBus()
+
+#===========================================================================================
+#Function that read the input data_branch file
+#===========================================================================================
+dataBranch = []
+def readInputBranch():
+    dataFile = open("data_Branch.txt","r")
+    linhas = dataFile.readlines()
+    j=0
+    for linha in linhas:
+        if j != 0:
+            fBus=linha.split(",",2)[0]
+            tBus=linha.split(",",2)[1]
+            dataBranch.append([])
+            dataBranch[j-1].append(fBus)
+            dataBranch[j-1].append(tBus)
+        else:
+            nBranch=int(linha.split(",",2)[0])
+        j=j+1
+    return nBranch
+
+nBranch = readInputBranch()
 #===========================================================================================
 #Function that read the input data_Photovoltaic file
 #===========================================================================================
@@ -144,9 +192,9 @@ fig_loadCurve.update_layout(legend_valign="middle")
 totalMW = 0
 totalMVar = 0
 
-#for i in range(dadosBarra.nBus):
-#    totalMW   += float(dadosBarra.dataBus[i][2])
-#    totalMVar += float(dadosBarra.dataBus[i][3]) 
+for i in range(nBus):
+    totalMW   += float(dataBus[i][2])
+    totalMVar += float(dataBus[i][3]) 
 
 layout = html.Div(children=[
     
@@ -161,12 +209,12 @@ layout = html.Div(children=[
         html.Div([
             html.Div([
                 html.P('Número de Barras'),
-               # html.H1(children="{}".format(dadosBarra.nBus),id="id_nBus",style={'margin-left':'2.5em'}),
+                html.H1(children="{}".format(nBus),id="id_nBus",style={'margin-left':'2.5em'}),
             ],id="halfGraph_green"),
 
             html.Div([
                 html.P('Número de Linhas'),
-               # html.H1(children="{}".format(dadosLinha.nBranch),id="id_nBranch",style={'margin-left':'2.5em'}),
+                html.H1(children="{}".format(nBranch),id="id_nBranch",style={'margin-left':'2.5em'}),
             ],id="halfGraph_yellow"), 
 
             html.Div([

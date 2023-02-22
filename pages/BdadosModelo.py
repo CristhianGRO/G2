@@ -1,5 +1,6 @@
 from dash import Dash, html, dcc
 import pandas as pd
+import numpy as np
 import plotly.graph_objs as go
 import dash
 
@@ -12,9 +13,7 @@ dash.register_page(
 
 
 
-barraPhotovoltaic = []
-dadosGeracao = []
-Ppico = []
+
 
 
 #===========================================================================================
@@ -69,21 +68,28 @@ nBranch = readInputBranch()
 #===========================================================================================
 #Function that read the input data_Photovoltaic file
 #===========================================================================================
+barraPhotovoltaic = []
+dadosGeracao = []
+Ppico = []
+
 def readInputPhotovoltaic():
     dataFile = open("data_Photovoltaic.txt","r")
     linhas = dataFile.readlines()
     j=0
     for linha in linhas:
         if j != 0:
-            Barra = linha.split(" ",2)[0]
+            Barra = int(linha.split(" ",2)[0])
             Ppicoj = float(linha.split(" ",2)[1])
+            barraPhotovoltaic.append([])
+            Ppico.append([])
+            dadosGeracao.append([])
             for i in range(24):
-                barraPhotovoltaic.append(Barra)
-                Ppico.append(Ppicoj)
+                barraPhotovoltaic[j-1].append(Barra)
+                Ppico[j-1].append(Ppicoj)
                 geradoHora = float(linha.split(" ",27)[i+2])
-                dadosGeracao.append(geradoHora)  
+                dadosGeracao[j-1].append(geradoHora)
         else:
-            nPhotovoltaic=int(linha.split(",",2)[0])
+            nPhotovoltaic=int(linha.split(" ",2)[0])
         j=j+1
     return nPhotovoltaic
 
@@ -101,31 +107,39 @@ def readInputLoadCurve():
     for linha in linhas:
         if j != 0:
             Barra = linha.split(" ",2)[0]
+            barraLoadCurve.append([])
+            dadosLoadCurve.append([])
             for i in range(24):
-                barraLoadCurve.append(Barra)
+                barraLoadCurve[j-1].append(Barra)
                 loadCurveHora = float(linha.split(" ",27)[i+1])
-                dadosLoadCurve.append(loadCurveHora)  
+                dadosLoadCurve[j-1].append(loadCurveHora)  
         else:
-            nLoadCurve=int(linha.split(",",2)[0])
+            nLoadCurve=int(linha.split(" ",2)[0])
         j=j+1
     return nLoadCurve
 
 nLoadCurve = readInputLoadCurve()
 
-
-horaFV=[]
+horaFV = []
+hora=[]
 horaLC = []
 ihora = 1
 
 for j in range(24):
-    horaFV.append(ihora)
-    horaLC.append(ihora)
+    hora.append(ihora)
     ihora = ihora+1
 
+
 if nPhotovoltaic > 1:
-    horaFV   *= nPhotovoltaic
+    for j in range(nPhotovoltaic):
+        horaFV.append(hora)
+else:
+    horaFV = hora
+
 if nLoadCurve > 1:
-    horaLC *= nLoadCurve
+    for j in range(nLoadCurve):
+        horaLC.append(hora)
+
 
 dfPhotovoltaic = pd.DataFrame({
     "Barra": barraPhotovoltaic,
@@ -133,7 +147,6 @@ dfPhotovoltaic = pd.DataFrame({
     "Geracao_Horaria": dadosGeracao,
     "Potencia_Pico": Ppico
 })
-
 
 dfLoadCurve = pd.DataFrame({
     "Barra": barraLoadCurve,
@@ -144,23 +157,25 @@ dfLoadCurve = pd.DataFrame({
 #Making the hour generation Vector used to construct the generation figure
 #===========================================================================================
 geracaoHoraria = []
-
+k=0
 for i in range(nPhotovoltaic):
-    newdfSolar = dfPhotovoltaic.query('Barra == "{}"'.format(barraPhotovoltaic[i+23]))
-    newdfSolar['Phoraria'] = newdfSolar.Geracao_Horaria * newdfSolar.Potencia_Pico
-    geracaoHorariaAtual = newdfSolar['Phoraria'].tolist()
-    geracaoHoraria.append(geracaoHorariaAtual)
-
+    geracaoHoraria.append([])
+    for j in range(24):
+        geracaoHorariaAtual = dadosGeracao[i][j] * Ppico[i][j]
+        geracaoHoraria[k].append(geracaoHorariaAtual)
+    k += 1
+   
 #===========================================================================================
 #Making the hour load curve Vector used to construct the load curve figure
 #===========================================================================================
 curvaDeCargaHoraria = []
-
+k=0
 for i in range(nLoadCurve):
-    newdfLoadCurve = dfLoadCurve.query('Barra == "{}"'.format(barraLoadCurve[i+23]))
-    curvaDeCargaAtual = newdfLoadCurve["Curva_de_Carga"].tolist()
-    curvaDeCargaHoraria.append(curvaDeCargaAtual)
-
+    curvaDeCargaHoraria.append([])
+    for j in range(24):
+        curvaDeCargaAtual = dadosLoadCurve[i][j]
+        curvaDeCargaHoraria[k].append(curvaDeCargaAtual)
+    k += 1
 
 
 #===========================================================================================
@@ -168,7 +183,7 @@ for i in range(nLoadCurve):
 #===========================================================================================
 fig_geracaoSolar = go.Figure(data=[go.Scatter(name="Barra de Geração: {}".format(barraPhotovoltaic[0][0]),x=horaFV, y=geracaoHoraria[0])])
 for i in range(1,nPhotovoltaic):
-    fig_geracaoSolar.add_trace(go.Scatter(name = "Barra de Geração: {}".format(barraPhotovoltaic[i+23][0]),x=horaFV, y=geracaoHoraria[i]))
+    fig_geracaoSolar.add_trace(go.Scatter(name = "Barra de Geração: {}".format(barraPhotovoltaic[i][0]),x=horaFV, y=geracaoHoraria[i]))
 
 fig_geracaoSolar.update_layout(legend_valign="middle")
 
@@ -177,9 +192,9 @@ fig_geracaoSolar.update_layout(legend_valign="middle")
 #===========================================================================================
 #Making the hour load Curve Figure
 #===========================================================================================
-fig_loadCurve = go.Figure(data=[go.Scatter(name="Barra de Carga: {}".format(barraLoadCurve[0]),x=horaLC, y=curvaDeCargaHoraria[0])])
+fig_loadCurve = go.Figure(data=[go.Scatter(name="Barra de Carga: {}".format(barraLoadCurve[0][0]),x=horaLC, y=curvaDeCargaHoraria[0])])
 for i in range(1,nLoadCurve):
-    fig_loadCurve.add_trace(go.Scatter(name = "Barra de Carga: {}".format(barraLoadCurve[i+23]),x=horaLC, y=curvaDeCargaHoraria[i]))
+    fig_loadCurve.add_trace(go.Scatter(name = "Barra de Carga: {}".format(barraLoadCurve[i][0]),x=horaLC, y=curvaDeCargaHoraria[i]))
 
 fig_loadCurve.update_layout(legend_valign="middle")
 
@@ -196,13 +211,40 @@ for i in range(nBus):
     totalMW   += float(dataBus[i][2])
     totalMVar += float(dataBus[i][3]) 
 
+#Get the total peak installed generation in the system
+geracaoTotalPico = 0
+for i in range(nPhotovoltaic):
+    geracaoTotalPico += Ppico[i][0]
+
+#Get the host percentual of the system
+hospedagem = geracaoTotalPico/totalMW *100
+
+#Get the higher generation bus of the system (considering the energy along the day)
+PV_energy = []
+for i in range(nPhotovoltaic):
+    PV_energy.append(sum(geracaoHoraria[i]))
+
+maximaGeracao = max(PV_energy)
+barraMaiorGeracao_index = PV_energy.index(maximaGeracao)
+barraMaiorGeracao = barraPhotovoltaic[barraMaiorGeracao_index][0]
+
+#===========================================================================================
+#Layout de exibicao HTML
+#===========================================================================================
 layout = html.Div(children=[
     
-    
-     html.Div([
-            html.H1(children='Dados do Modelo',className='titulo_secao'),
-        ],className='div_titulo_secao'),
+ 
+    html.Div([
+        html.H1(children='Dados do Modelo',className='titulo_secao'),
+    ],className='div_titulo_secao'),
 
+    html.Div([
+        html.P('Diagrama Unifilar'),
+     
+        html.Img(src="../assets/imagens/modelo_70_barras.jpg",style={'width': '100%'}),
+    ],id="wideGraph_yellow"),
+    
+    
 
         #------------------------------------------------------------------------------------------
         #Analise de Modelo
@@ -242,6 +284,23 @@ layout = html.Div(children=[
             )
         ],id="wideGraph_blue"),
 
+        html.Div([
+            html.Div([
+                html.P('Geração de Pico Instalada'),
+                html.H1(children="{:.3f} p.u.".format(geracaoTotalPico),id="id_nBus",style={'margin-left':'0.2em'}),
+            ],id="halfGraph_green"),
+
+            html.Div([
+                html.P('Hospedagem'),
+                html.H1(children="{:.2f}%".format(hospedagem),id="id_nBranch",style={'margin-left':'1.2em'}),
+            ],id="halfGraph_blue"), 
+
+            html.Div([
+                html.P('Barra de maior geração'),
+                html.H2(children="{}".format(barraMaiorGeracao),id="id_totalMW",style={'margin-left':'3.5em'}),
+                html.H2(children="{:.3f} p.u.".format(maximaGeracao),id="id_totalMVar",style={'margin-left':'1.8em'}),
+            ],id="halfGraph_yellow"), 
+        ],className="halfDivConfig"),
        
 
    
